@@ -1,0 +1,287 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =========================
+// ENUM
+// =========================
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+// =========================
+// USER & RBAC
+// =========================
+
+model User {
+  id           Int    @id @default(autoincrement())
+  email        String @unique
+  name         String
+  passwordHash String @map("password_hash")
+
+  roleId       Int  @map("role_id")
+  departmentId Int? @map("department_id")
+  clientId     Int? @map("client_id")
+
+  role       Role        @relation(fields: [roleId], references: [id])
+  department Department? @relation(fields: [departmentId], references: [id])
+  client     Client?     @relation(fields: [clientId], references: [id])
+
+  projectMembers ProjectMember[]
+  assignedTasks  Task[] @relation("TaskAssignee")
+  attachments    TaskAttachment[]
+  comments       TaskComment[]
+  auditLogs      TaskAuditLog[]
+
+  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([clientId])
+  @@index([roleId])
+  @@index([departmentId])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  permissions RolePermission[]
+  users       User[]
+
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([deletedAt])
+  @@map("roles")
+}
+
+model Permission {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  roles RolePermission[]
+
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([deletedAt])
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       Int @map("role_id")
+  permissionId Int @map("permission_id")
+
+  role       Role       @relation(fields: [roleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  users User[]
+
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([deletedAt])
+  @@map("departments")
+}
+
+// =========================
+// CLIENT / TENANT
+// =========================
+
+model Client {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String @unique
+
+  users    User[]
+  projects Project[]
+
+  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([deletedAt])
+  @@map("clients")
+}
+
+// =========================
+// PROJECT
+// =========================
+
+model Project {
+  id       Int @id @default(autoincrement())
+  name     String
+
+  clientId Int @map("client_id")
+
+  client  Client          @relation(fields: [clientId], references: [id])
+  members ProjectMember[]
+  tasks   Task[]
+
+  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([clientId])
+  @@index([deletedAt])
+  @@map("projects")
+}
+
+// =========================
+// PROJECT MEMBER
+// =========================
+
+model ProjectMember {
+  projectId Int @map("project_id")
+  userId    Int @map("user_id")
+
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@id([projectId, userId])
+  @@map("project_members")
+}
+
+// =========================
+// TASK
+// =========================
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  projectId   Int        @map("project_id")
+  assigneeId  Int?       @map("assignee_id")
+
+  title       String
+  description String
+  status      TaskStatus @default(TODO)
+
+  clientVisible Boolean @default(false) @map("client_visible")
+
+  // Optimistic locking
+  version Int @default(1)
+
+  project  Project @relation(fields: [projectId], references: [id])
+  assignee User?   @relation("TaskAssignee", fields: [assigneeId], references: [id])
+
+  dependencies TaskDependency[] @relation("TaskDependencies")
+  dependents   TaskDependency[] @relation("TaskDependents")
+
+  attachments TaskAttachment[]
+  comments    TaskComment[]
+  auditLogs   TaskAuditLog[]
+
+  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("tasks")
+}
+
+// =========================
+// TASK DEPENDENCY
+// =========================
+
+model TaskDependency {
+  taskId      Int @map("task_id")
+  dependsOnId Int @map("depends_on_id")
+
+  task Task @relation("TaskDependencies",fields: [taskId],references: [id])
+
+  dependsOn Task @relation("TaskDependents",fields: [dependsOnId],references: [id])
+
+  @@id([taskId, dependsOnId])
+  @@map("task_dependencies")
+}
+
+// =========================
+// TASK ATTACHMENT
+// =========================
+
+model TaskAttachment {
+  id           Int @id @default(autoincrement())
+  taskId       Int @map("task_id")
+  uploadedById Int @map("uploaded_by_id")
+
+  fileName String @map("file_name")
+  fileUrl  String @map("file_url")
+
+  task       Task @relation(fields: [taskId], references: [id])
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([taskId])
+  @@index([uploadedById])
+  @@index([deletedAt])
+  @@map("task_attachments")
+}
+
+// =========================
+// TASK COMMENT
+// =========================
+
+model TaskComment {
+  id     Int @id @default(autoincrement())
+  taskId Int @map("task_id")
+  userId Int @map("user_id")
+
+  content    String
+  isInternal Boolean @default(true) @map("is_internal")
+
+  task Task @relation(fields: [taskId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([taskId])
+  @@index([userId])
+  @@index([deletedAt])
+  @@map("task_comments")
+}
+
+// =========================
+// TASK AUDIT LOG
+// =========================
+
+model TaskAuditLog {
+  id Int @id @default(autoincrement())
+
+  taskId Int @map("task_id")
+  userId Int @map("user_id")
+
+  changedColumn String  @map("changed_column")
+  oldValue     String? @map("old_value")
+  newValue     String? @map("new_value")
+
+  task Task @relation(fields: [taskId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([taskId])
+  @@index([userId])
+  @@map("task_audit_logs")
+}
