@@ -1,7 +1,8 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, TaskStatus } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
+
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
 });
@@ -77,33 +78,13 @@ async function main() {
     },
   });
 
-  const frontendRole = await prisma.role.upsert({
+  const internalTeamRole = await prisma.role.upsert({
     where: {
-      name: "FRONTEND_ENGINEER",
+      name: "INTERNAL_TEAM",
     },
     update: {},
     create: {
-      name: "FRONTEND_ENGINEER",
-    },
-  });
-
-  const backendRole = await prisma.role.upsert({
-    where: {
-      name: "BACKEND_ENGINEER",
-    },
-    update: {},
-    create: {
-      name: "BACKEND_ENGINEER",
-    },
-  });
-
-  const uiuxRole = await prisma.role.upsert({
-    where: {
-      name: "UIUX_DESIGNER",
-    },
-    update: {},
-    create: {
-      name: "UIUX_DESIGNER",
+      name: "INTERNAL_TEAM",
     },
   });
 
@@ -188,6 +169,7 @@ async function main() {
     }
   };
 
+  // Product Manager
   await assignPermissions(pmRole.id, [
     "PROJECT_READ",
     "PROJECT_CREATE",
@@ -208,30 +190,19 @@ async function main() {
     "TASK_COMMENT_CREATE",
   ]);
 
-  await assignPermissions(frontendRole.id, [
+  // Internal Team
+  await assignPermissions(internalTeamRole.id, [
     "PROJECT_READ",
+
     "TASK_READ",
+    "TASK_UPDATE",
     "TASK_UPDATE_STATUS",
+
     "TASK_ATTACHMENT_CREATE",
     "TASK_COMMENT_CREATE",
   ]);
 
-  await assignPermissions(backendRole.id, [
-    "PROJECT_READ",
-    "TASK_READ",
-    "TASK_UPDATE_STATUS",
-    "TASK_ATTACHMENT_CREATE",
-    "TASK_COMMENT_CREATE",
-  ]);
-
-  await assignPermissions(uiuxRole.id, [
-    "PROJECT_READ",
-    "TASK_READ",
-    "TASK_UPDATE_STATUS",
-    "TASK_ATTACHMENT_CREATE",
-    "TASK_COMMENT_CREATE",
-  ]);
-
+  // Client
   await assignPermissions(clientRole.id, ["PROJECT_READ", "TASK_READ"]);
 
   // =========================
@@ -276,7 +247,7 @@ async function main() {
       email: "frontend@example.com",
       name: "Frontend Engineer",
       passwordHash,
-      roleId: frontendRole.id,
+      roleId: internalTeamRole.id,
       departmentId: frontendDepartment.id,
     },
   });
@@ -290,7 +261,7 @@ async function main() {
       email: "backend@example.com",
       name: "Backend Engineer",
       passwordHash,
-      roleId: backendRole.id,
+      roleId: internalTeamRole.id,
       departmentId: backendDepartment.id,
     },
   });
@@ -304,7 +275,7 @@ async function main() {
       email: "designer@example.com",
       name: "UI/UX Designer",
       passwordHash,
-      roleId: uiuxRole.id,
+      roleId: internalTeamRole.id,
       departmentId: uiuxDepartment.id,
     },
   });
@@ -412,9 +383,6 @@ async function main() {
   // DEPENDENCIES
   // =========================
 
-  // Implement Login Page
-  // depends on Create Login UI
-
   await prisma.taskDependency.create({
     data: {
       taskId: frontendTask.id,
@@ -422,18 +390,12 @@ async function main() {
     },
   });
 
-  // Integrate Login
-  // depends on Implement Login Page
-
   await prisma.taskDependency.create({
     data: {
       taskId: integrationTask.id,
       dependsOnId: frontendTask.id,
     },
   });
-
-  // Integrate Login
-  // depends on Create Login API
 
   await prisma.taskDependency.create({
     data: {

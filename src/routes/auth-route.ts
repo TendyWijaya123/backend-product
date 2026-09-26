@@ -34,26 +34,7 @@ authRoute.post("/register", zValidator("json", registerSchema), async (c) => {
       departmentId: data.departmentId,
       clientId: data.clientId,
     },
-    include: {
-      role: { include: { permissions: { include: { permission: true } } } },
-      department: true,
-    },
   });
-
-  const now = Math.floor(Date.now() / 1000);
-  const token = await sign(
-    {
-      sub: user.id.toString(),
-      email: user.email,
-      roleId: user.roleId,
-      departmentId: user.departmentId,
-      clientId: user.clientId,
-      permissions: user.role.permissions.map((item) => item.permission.name),
-      iat: now,
-      exp: now + Number(process.env.JWT_EXPIRES_IN),
-    },
-    process.env.JWT_SECRET!,
-  );
 
   return c.json(
     {
@@ -67,7 +48,6 @@ authRoute.post("/register", zValidator("json", registerSchema), async (c) => {
           departmentId: user.departmentId,
           clientId: user.clientId,
         },
-        accessToken: token,
       },
     },
     201,
