@@ -13,16 +13,16 @@
         "dotenv": "^18.0.3",
         "hono": "^4.13.9",
         "pg": "^8.23.0",
-        "zod": "^4.6.5",
+        "zod": "^4.6.5"
       },
       "devDependencies": {
         "@types/bcrypt": "^6.0.0",
         "@types/bun": "^1.4.2",
         "@types/node": "^26.6.2",
         "@types/pg": "^8.23.1",
-        "prisma": "7",
-      },
-    },
+        "prisma": "7"
+      }
+    }
   },
   "packages": {
     "@electric-sql/pglite": ["@electric-sql/pglite@0.4.3", "", {}, "sha512-ichuWTgtd4mOM1G4SpyGJa5trT03lWbMypDV0fUXUCXg5hiHqVAz/bZyV68NqmkLB7WcYmj1RMJVSp8HV/v/ZQ=="],
@@ -357,6 +357,6 @@
 
     "pkg-types/confbox": ["confbox@0.3.1", "", {}, "sha512-cKUSoKa8YxFZZSmraVi7onONx3amu77ngK3kGpsYHDH7drPwCRkQE1RYMPlLRrMtnciRj274XNRxcHxnKmDSnA=="],
 
-    "proper-lockfile/signal-exit": ["signal-exit@3.0.7", "", {}, "sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ=="],
+    "proper-lockfile/signal-exit": ["signal-exit@3.0.7", "", {}, "sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ=="]
   }
 }

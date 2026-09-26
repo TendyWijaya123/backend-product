@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import type { Context } from "hono";
+import { HTTPException } from "hono/http-exception";
 
 export class AppError extends Error {
   constructor(
@@ -23,6 +24,19 @@ export const errorHandler = (err: Error, c: Context) => {
         },
       },
       err.statusCode as any,
+    );
+  }
+
+  if (err instanceof HTTPException) {
+    return c.json(
+      {
+        success: false,
+        error: {
+          code: err.status === 401 ? "UNAUTHORIZED" : "HTTP_ERROR",
+          message: err.message,
+        },
+      },
+      err.status,
     );
   }
 

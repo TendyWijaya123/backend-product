@@ -8,3 +8,5 @@ export const authMiddleware = async (c: Context, next: Next) => {
     alg: "HS256",
   })(c, next);
 };
+
+export default authMiddleware;

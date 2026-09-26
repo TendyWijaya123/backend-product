@@ -6,6 +6,7 @@ import db from "../db/prisma";
 import { AppError } from "../middleware/error-handler";
 import bcrypt from "bcryptjs";
 import { SignatureKey } from "hono/utils/jwt/jws";
+import authMiddleware from "../middleware/auth-middleware";
 
 const authRoute = new Hono().basePath("/auth");
 
