@@ -7,3 +7,8 @@ export const registerSchema = z.object({
   departmentId: z.number().int().positive().optional(),
   clientId: z.number().int().positive().optional(),
 });
+
+export const loginSchema = z.object({
+  email: z.email(),
+  password: z.string().min(8),
+});

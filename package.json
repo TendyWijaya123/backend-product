@@ -2,7 +2,7 @@
   "name": "backend-product-engineer",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "bun --watch src/index.ts",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "seed": "bun prisma/seed.ts"
@@ -23,7 +23,6 @@
     "@types/bun": "^1.4.2",
     "@types/node": "^26.6.2",
     "@types/pg": "^8.23.1",
-    "prisma": "7",
-    "wrangler": "^4.110.0"
+    "prisma": "7"
   }
 }
