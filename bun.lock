@@ -5,6 +5,7 @@
     "": {
       "name": "backend-product-engineer",
       "dependencies": {
+        "@hono/zod-validator": "^0.9.1",
         "@prisma/adapter-pg": "^7.10.0",
         "@prisma/client": "7",
         "@prisma/extension-accelerate": "^3.0.1",
@@ -12,6 +13,7 @@
         "dotenv": "^18.0.3",
         "hono": "^4.13.9",
         "pg": "^8.23.0",
+        "zod": "^4.6.5",
       },
       "devDependencies": {
         "@types/bcrypt": "^6.0.0",
@@ -99,6 +101,8 @@
     "@esbuild/win32-ia32": ["@esbuild/win32-ia32@0.28.1", "", { "os": "win32", "cpu": "ia32" }, "sha512-zvb/mB2bSCoJOpoCBgYKKpX6YM6mJBlBUVUtVj41DlZJVEB6/0CKlRYxP5wWl1C1ILiCoAU5wZZ4q1P3qeS6Eg=="],
 
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.28.1", "", { "os": "win32", "cpu": "x64" }, "sha512-bm4Mowrv+GXMlpWX++EcXw/iLyd1o3+bJkC2DkWXYVvgZCqD/bSj9ctZeAMC3cIxgjRVR2Dufaiu4YPxr5gW1A=="],
+
+    "@hono/zod-validator": ["@hono/zod-validator@0.9.1", "", { "peerDependencies": { "hono": ">=4.11.2", "zod": "^3.25.0 || ^4.0.0" } }, "sha512-iiv6w0qrIc0arfvCtUqBWsvl4fXjzaTcQcCJTTtCnkawF9HHGE+KjEl0ox3gQJ6rKZEgE3mLExlQCF72M+mNuw=="],
 
     "@img/colour": ["@img/colour@1.1.0", "", {}, "sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ=="],
 
@@ -521,6 +525,8 @@
     "youch-core": ["youch-core@0.3.3", "", { "dependencies": { "@poppinss/exception": "^1.2.2", "error-stack-parser-es": "^1.0.5" } }, "sha512-ho7XuGjLaJ2hWHoK8yFnsUGy2Y5uDpqSTq1FkHLK4/oqKtyUU1AFbOOxY4IpC9f0fTLjwYbslUz0Po5BpD1wrA=="],
 
     "zeptomatch": ["zeptomatch@2.1.0", "", { "dependencies": { "grammex": "^3.1.11", "graphmatch": "^1.1.0" } }, "sha512-KiGErG2J0G82LSpniV0CtIzjlJ10E04j02VOudJsPyPwNZgGnRKQy7I1R7GMyg/QswnE4l7ohSGrQbQbjXPPDA=="],
+
+    "zod": ["zod@4.6.5", "", {}, "sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q=="],
 
     "@prisma/engines/@prisma/get-platform": ["@prisma/get-platform@7.10.0", "", { "dependencies": { "@prisma/debug": "7.10.0" } }, "sha512-0bra1LFYi8xNw0yqV62bHJNQk4BKleOngZiqPWIQc7a3+9q6rqsnqJ15BuepP8943PFMvtmgnP52juZsyYkA6w=="],
 
