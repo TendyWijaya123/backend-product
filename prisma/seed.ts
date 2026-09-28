@@ -117,8 +117,11 @@ async function main() {
     "TASK_ASSIGN",
 
     "TASK_DEPENDENCY_CREATE",
+    "TASK_DEPENDENCY_DELETE",
 
     "TASK_ATTACHMENT_CREATE",
+    "TASK_ATTACHMENT_DELETE",
+
     "TASK_COMMENT_CREATE",
   ];
 
@@ -169,7 +172,10 @@ async function main() {
     }
   };
 
-  // Product Manager
+  // =========================
+  // PRODUCT MANAGER
+  // =========================
+
   await assignPermissions(pmRole.id, [
     "PROJECT_READ",
     "PROJECT_CREATE",
@@ -185,12 +191,18 @@ async function main() {
     "TASK_ASSIGN",
 
     "TASK_DEPENDENCY_CREATE",
+    "TASK_DEPENDENCY_DELETE",
 
     "TASK_ATTACHMENT_CREATE",
+    "TASK_ATTACHMENT_DELETE",
+
     "TASK_COMMENT_CREATE",
   ]);
 
-  // Internal Team
+  // =========================
+  // INTERNAL TEAM
+  // =========================
+
   await assignPermissions(internalTeamRole.id, [
     "PROJECT_READ",
 
@@ -199,10 +211,15 @@ async function main() {
     "TASK_UPDATE_STATUS",
 
     "TASK_ATTACHMENT_CREATE",
+    "TASK_ATTACHMENT_DELETE",
+
     "TASK_COMMENT_CREATE",
   ]);
 
-  // Client
+  // =========================
+  // CLIENT GUEST
+  // =========================
+
   await assignPermissions(clientRole.id, ["PROJECT_READ", "TASK_READ"]);
 
   // =========================
@@ -280,7 +297,11 @@ async function main() {
     },
   });
 
-  const clientUser = await prisma.user.upsert({
+  // =========================
+  // CLIENT USER
+  // =========================
+
+  await prisma.user.upsert({
     where: {
       email: "guest@acme.com",
     },
@@ -414,19 +435,6 @@ async function main() {
       userId: pm.id,
       content: "Please follow the approved UI design.",
       isInternal: true,
-    },
-  });
-
-  // =========================
-  // ATTACHMENT
-  // =========================
-
-  await prisma.taskAttachment.create({
-    data: {
-      taskId: frontendTask.id,
-      uploadedById: frontend.id,
-      fileName: "login-design.png",
-      fileUrl: "https://example.com/files/login-design.png",
     },
   });
 

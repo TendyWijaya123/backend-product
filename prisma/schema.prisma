@@ -217,12 +217,13 @@ model TaskDependency {
 // =========================
 
 model TaskAttachment {
-  id           Int @id @default(autoincrement())
-  taskId       Int @map("task_id")
-  uploadedById Int @map("uploaded_by_id")
+  id           Int      @id @default(autoincrement())
+  taskId       Int      @map("task_id")
+  uploadedById Int      @map("uploaded_by_id")
 
-  fileName String @map("file_name")
-  fileUrl  String @map("file_url")
+  fileName     String   @map("file_name")
+  fileKey      String   @map("file_key")
+  fileUrl      String   @map("file_url")
 
   task       Task @relation(fields: [taskId], references: [id])
   uploadedBy User @relation(fields: [uploadedById], references: [id])
